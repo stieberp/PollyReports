@@ -630,8 +630,9 @@ class Line(object):
     def __init__(self, pos, pos2, thickness=1, report=None):
         self.pos = pos
         self.pos2 = pos2
-        self.height = thickness
+        self.height = abs(pos[1] - pos2[1])
         self.report = report
+        self.thickness = thickness
 
     def gettext(self, row):
         return "-"
@@ -640,19 +641,20 @@ class Line(object):
         return "-"
 
     def generate(self, row):
-        return Line(self.pos, self.pos2, self.height, self.report)
+        return Line(self.pos, self.pos2, self.thickness, self.report)
 
     def render(self, offset, canvas):
         leftmargin = self.report.leftmargin
         canvas.saveState()
-        canvas.setLineWidth(self.height)
+        canvas.setLineWidth(self.thickness)
         canvas.setStrokeGray(0)
-        canvas.line(self.pos[0] + leftmargin, -1 * (self.pos[1] + offset + self.height / 2), self.pos2[0] + leftmargin,
-                    -1 * (self.pos2[1] + offset + self.height / 2))
+        canvas.line(self.pos[0] + leftmargin, -1 * (self.pos[1] + offset),
+                    self.pos2[0] + leftmargin, -1 * (self.pos2[1] + offset))
         canvas.restoreState()
 
     def applyoffset(self, offset):
         self.pos = (self.pos[0], self.pos[1] + offset)
+        self.pos2 = (self.pos2[0], self.pos2[1] + offset)
         return self
 
 
