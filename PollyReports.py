@@ -660,11 +660,11 @@ class Line(object):
 
 class Rectangle(object):
 
-    def __init__(self, pos, width, width2, thickness=1, report=None):
+    def __init__(self, pos, width, height, thickness=1, report=None):
         self.pos = pos
         self.width = width
-        self.width2 = width2
-        self.height = thickness
+        self.height = height
+        self.thickness = thickness
         self.report = report
 
     def gettext(self, row):
@@ -674,22 +674,23 @@ class Rectangle(object):
         return "-"
 
     def generate(self, row):
-        return Rectangle(self.pos, self.width, self.width2, self.height, self.report)
+        return Rectangle(self.pos, self.width, self.height, self.thickness, self.report)
 
     def render(self, offset, canvas):
         leftmargin = self.report.leftmargin
         canvas.saveState()
-        canvas.setLineWidth(self.height)
+        canvas.setLineWidth(self.thickness)
         canvas.setStrokeGray(0)
         # lines ordered clockwise
-        canvas.line(self.pos[0] + leftmargin, -1 * (self.pos[1] + offset + self.height / 2),
-                    self.pos[0] + self.width + leftmargin, -1 * (self.pos[1] + offset + self.height / 2))
-        canvas.line(self.pos[0] + self.width + leftmargin, -1 * (self.pos[1] + offset + self.height / 2),
-                    self.pos[0] + self.width + leftmargin, -1 * (self.pos[1] + offset + self.width2 + self.height / 2))
-        canvas.line(self.pos[0] + self.width + leftmargin, -1 * (self.pos[1] + offset + self.width2 + self.height / 2),
-                    self.pos[0] + leftmargin, -1 * (self.pos[1] + offset + self.width2 + self.height / 2))
-        canvas.line(self.pos[0] + leftmargin, -1 * (self.pos[1] + offset + self.width2 + self.height / 2),
-                    self.pos[0] + leftmargin, -1 * (self.pos[1] + offset + self.height / 2))
+        canvas.line(self.pos[0] + leftmargin, -1 * (self.pos[1] + offset),
+                    self.pos[0] + self.width + leftmargin, -1 * (self.pos[1] + offset))
+
+        canvas.line(self.pos[0] + self.width + leftmargin, -1 * (self.pos[1] + offset),
+                    self.pos[0] + self.width + leftmargin, -1 * (self.pos[1] + offset + self.height))
+        canvas.line(self.pos[0] + self.width + leftmargin, -1 * (self.pos[1] + offset + self.height),
+                    self.pos[0] + leftmargin, -1 * (self.pos[1] + offset + self.height ))
+        canvas.line(self.pos[0] + leftmargin, -1 * (self.pos[1] + offset + self.height ),
+                    self.pos[0] + leftmargin, -1 * (self.pos[1] + offset ))
         canvas.restoreState()
 
     def applyoffset(self, offset):
